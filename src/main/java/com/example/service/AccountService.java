@@ -17,6 +17,10 @@ public class AccountService {
     }
 
     public Account registerAccount(Account account){
+        Optional<Account> optionalAccount = accountRepository.findAccountByUsername(account.getUsername());
+        if(optionalAccount.isPresent()){
+            return null;
+        }
         return accountRepository.save(account);
     }
 

@@ -19,6 +19,11 @@ public class SocialMediaController {
     AccountService accountService;
     MessageService messageService;
 
+    public SocialMediaController(AccountService accountService, MessageService messageService){
+        this.accountService = accountService;
+        this.messageService = messageService;
+    }
+
     @PostMapping("/register")
     public ResponseEntity<Account> registerAccount(@RequestBody Account account){
         if ((account.getUsername() == "") || (account.getPassword().length() < 4)){
