@@ -18,7 +18,14 @@ public class MessageService {
     }
 
     public Message postMessage(Message message){
-        return messageRepository.save(message);
+        if ((message.getMessageText() == "") || (message.getMessageText().length() > 255)){
+            return null;
+        }
+        try{
+            return messageRepository.save(message);
+        } catch(Exception e) {
+            return null;
+        }
     }
 
     public List<Message> getMessages(){
@@ -33,23 +40,29 @@ public class MessageService {
         return null;
     }
 
-    public Message deleteMessage(int id){
+    public int deleteMessage(int id){
+        int affectedRows = 0;
         Optional<Message> optionalMessage = messageRepository.findById(id);
         if (optionalMessage.isPresent()){
+            affectedRows++;
             messageRepository.deleteById(id);
-            return optionalMessage.get();
         }
-        return null;
+        return affectedRows;
     }
 
-    public Message updateMessage(int id, Message replacement){
+    public int updateMessage(int id, String newMessageText){
+        int affectedRows = 0;
         Optional<Message> optionalMessage = messageRepository.findById(id);
-        if(optionalMessage.isPresent()){
-            Message message = optionalMessage.get();
-            message.setMessageText(replacement.getMessageText());
-            return messageRepository.save(message);
+        if((newMessageText == "") || (newMessageText.length() > 255)){
+            return affectedRows;
         }
-        return null;
+        if ((optionalMessage.isPresent())){
+            Message message = optionalMessage.get();
+            message.setMessageText(newMessageText);
+            messageRepository.save(message);
+            affectedRows++;
+        }
+        return affectedRows;
     }
 
     public List<Message> getUserMessages(int id){
